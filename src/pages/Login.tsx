@@ -1,16 +1,30 @@
-// src/pages/Login.jsx
+// src/pages/Login.tsx
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Home, Mail, Lock, User, Phone, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from "lucide-react";
+import {
+  Home, Mail, Lock, User, Phone,
+  AlertCircle, CheckCircle, Loader2, Eye, EyeOff,
+} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/context/AuthContext";
 
-// ── Validation helpers ──────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────
+interface Fields {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+}
+
+type FieldErrors = Partial<Record<keyof Fields, string>>;
+
+// ── Validation ───────────────────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[0-9+\s\-()]{8,15}$/;
 
-function validate(fields, isSignUp) {
-  const errors = {};
+function validate(fields: Fields, isSignUp: boolean): FieldErrors {
+  const errors: FieldErrors = {};
+
   if (isSignUp) {
     if (!fields.name.trim()) errors.name = "Le nom est requis.";
     else if (fields.name.trim().length < 2) errors.name = "Au moins 2 caractères.";
@@ -18,6 +32,7 @@ function validate(fields, isSignUp) {
     if (!fields.phone.trim()) errors.phone = "Le téléphone est requis.";
     else if (!PHONE_RE.test(fields.phone)) errors.phone = "Numéro invalide.";
   }
+
   if (!fields.email.trim()) errors.email = "L'email est requis.";
   else if (!EMAIL_RE.test(fields.email)) errors.email = "Email invalide.";
 
@@ -27,10 +42,16 @@ function validate(fields, isSignUp) {
   return errors;
 }
 
-// ── Field component ─────────────────────────────────────────────────────────
-function Field({ icon: Icon, error, extra, ...props }) {
+// ── Field component ──────────────────────────────────────────────────────────
+interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  icon: React.ElementType;
+  error?: string;
+}
+
+function Field({ icon: Icon, error, ...props }: FieldProps) {
   const [showPwd, setShowPwd] = useState(false);
   const isPassword = props.type === "password";
+
   return (
     <div className="space-y-1">
       <div
@@ -75,18 +96,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState("");
   const [success, setSuccess] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-  const [fields, setFields] = useState({
+  const [fields, setFields] = useState<Fields>({
     name: "",
     phone: "",
     email: "",
     password: "",
   });
 
-  const set = (key) => (e) => {
+  const set = (key: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFields((f) => ({ ...f, [key]: e.target.value }));
-    // Clear individual field error on change
     setFieldErrors((fe) => ({ ...fe, [key]: undefined }));
     setGlobalError("");
   };
@@ -99,12 +119,11 @@ export default function Login() {
     setFields({ name: "", phone: "", email: "", password: "" });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGlobalError("");
     setSuccess("");
 
-    // Client-side validation
     const errors = validate(fields, isSignUp);
     if (Object.keys(errors).length) {
       setFieldErrors(errors);
@@ -112,13 +131,12 @@ export default function Login() {
     }
 
     setLoading(true);
-    // Simulate a tiny async delay (feels more realistic)
     await new Promise((r) => setTimeout(r, 600));
 
     if (isSignUp) {
       const result = register(fields);
       if (!result.success) {
-        setGlobalError(result.error);
+        setGlobalError(result.error ?? "Erreur lors de l'inscription.");
         setLoading(false);
         return;
       }
@@ -126,7 +144,7 @@ export default function Login() {
     } else {
       const result = login(fields);
       if (!result.success) {
-        setGlobalError(result.error);
+        setGlobalError(result.error ?? "Identifiants incorrects.");
         setLoading(false);
         return;
       }
@@ -134,8 +152,7 @@ export default function Login() {
     }
 
     setLoading(false);
-    // Redirect to the page they came from, or home
-    const from = location.state?.from?.pathname || "/";
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/";
     setTimeout(() => navigate(from, { replace: true }), 800);
   };
 
@@ -256,10 +273,7 @@ export default function Login() {
           {/* Toggle mode */}
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {isSignUp ? "Déjà inscrit ?" : "Pas encore de compte ?"}{" "}
-            <button
-              onClick={switchMode}
-              className="font-medium text-accent hover:underline"
-            >
+            <button onClick={switchMode} className="font-medium text-accent hover:underline">
               {isSignUp ? "Se connecter" : "S'inscrire"}
             </button>
           </p>

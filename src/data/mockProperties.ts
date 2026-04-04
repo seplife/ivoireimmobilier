@@ -247,8 +247,8 @@ export const mockProperties: Property[] = [
   owner_name: "À préciser",
   owner_phone: "+225 79 53 57 95",
   images: [
-    "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80",
-    "https://images.unsplash.com/photo-1598514983318-2f64f8f4796c?w=800&q=80"
+   "/images/img1.jpg",
+    "/images/img2.jpg"
   ],
   verified: false,
   created_at: "2026-04-04",
