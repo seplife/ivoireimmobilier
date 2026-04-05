@@ -63,7 +63,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-primary-foreground/70">
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 shrink-0" />
-                Divo, Konankro
+                Abidjan, Cocody Riviera
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 shrink-0" />
