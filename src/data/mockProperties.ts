@@ -238,16 +238,16 @@ export const mockProperties: Property[] = [
     "Ensemble de 2 terrains jumelés de 500m² chacun (1000m² au total). Le premier terrain comprend une ferme moderne pouvant accueillir jusqu’à 2000 poulets ainsi qu’une maison déjà construite de type chambre-salon. Le second terrain est vierge, idéal pour extension, construction ou projet agricole. Opportunité parfaite pour investissement agro-immobilier.",
   property_type: "Terrain",
   status: "À Vendre",
-  price: 0, // à remplacer par le prix réel
+  price: 10000000, // à remplacer par le prix réel
   surface: 1000,
   rooms: 1,
   address: "À préciser",
   city: "Divo",
   commune: "Divo",
-  owner_name: "À préciser",
+  owner_name: "Gbagnon Denis",
   owner_phone: "+225 79 53 57 95",
   images: [
-   "/images/img1.jpg",
+   "/images/img01.jpg",
     "/images/img2.jpg"
   ],
   verified: false,
